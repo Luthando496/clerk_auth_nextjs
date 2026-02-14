@@ -1,3 +1,4 @@
+import TransactionForm from '@/components/transaction-form'
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import Link from 'next/link'
@@ -33,7 +34,7 @@ const NewTransActionsPage = () => {
 
           </BreadcrumbList>
         </Breadcrumb>
-        <Card className='mt-4 max-w-md'>
+        <Card className='mt-4 max-w-4xl'>
           <CardHeader>
             <CardTitle  className='text-gray-800 font-bold text-xl'>
               New Transaction
@@ -41,7 +42,7 @@ const NewTransActionsPage = () => {
           </CardHeader>
           
           <CardContent>
-
+            <TransactionForm />
           </CardContent>
 
         </Card>
