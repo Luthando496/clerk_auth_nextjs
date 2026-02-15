@@ -52,7 +52,10 @@ const TransactionForm = () => {
 
   const handleSubmit = async (
     data: z.infer<typeof transactionFormSchema>,
-  ) => {};
+  ) => {
+
+    console.log(data," This is my data!")
+  };
   return (
     <>
       <Form {...form}>
