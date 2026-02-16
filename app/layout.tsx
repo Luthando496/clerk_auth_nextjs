@@ -7,6 +7,7 @@ import { ChartBarIcon, ChartColumnBigIcon } from "lucide-react";
 import { ClerkProvider, SignedIn, SignedOut, SignInButton, SignUpButton } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import UserDropdown from "./UserDropdown";
+import { Toaster } from "@/components/ui/sonner"
 
 // import myImage from '@/public/finance.jpg'
 
@@ -53,7 +54,9 @@ export default function RootLayout({
               </SignedIn>
           </div>
         </nav>
-        {children}</body>
+        {children}
+        <Toaster position="top-center" />
+        </body>
     </html>
     </ClerkProvider>
   );

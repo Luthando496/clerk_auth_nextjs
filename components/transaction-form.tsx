@@ -25,7 +25,7 @@ import { Calendar } from "./ui/calendar";
 import { ChevronDownIcon } from "lucide-react";
 import { Input } from "./ui/input";
 
-const transactionFormSchema = z.object({
+export const transactionFormSchema = z.object({
   transactionType: z.enum(["expense", "income"]),
   categoryID: z.coerce.number().positive("Please Select A Category"),
   transactionDate: z.coerce
@@ -38,7 +38,20 @@ const transactionFormSchema = z.object({
     .max(300, "Maximum contain at maximum 300 characters"),
 });
 
-const TransactionForm = () => {
+export type categoryType = {
+  id: number;
+  name: string;
+  type: "income" | "expense";
+};
+
+export type Props = {
+  categories: categoryType[];
+  onSubmit: (data: z.infer<typeof transactionFormSchema>) => Promise<void>;
+};
+
+
+
+const TransactionForm = ({ categories, onSubmit }: Props) => {
   const form = useForm({
     resolver: zodResolver(transactionFormSchema),
     defaultValues: {
@@ -46,21 +59,19 @@ const TransactionForm = () => {
       description: "",
       categoryID: 0,
       transactionDate: new Date(),
-      transactionType: "income",
+      transactionType: "expense",
     },
   });
+  const selectedType = form.watch("transactionType");
 
-  const handleSubmit = async (
-    data: z.infer<typeof transactionFormSchema>,
-  ) => {
-
-    console.log(data," This is my data!")
-  };
+  const filteredCategories = React.useMemo(() => {
+    return categories.filter((cate) => cate.type === selectedType);
+  }, [categories, selectedType]);
   return (
     <>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(handleSubmit)}>
-          <fieldset className="grid grid-cols-2 gap-y-3 gap-x-2">
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <fieldset disabled={form.formState.isSubmitting} className="grid grid-cols-2 gap-y-3 gap-x-2">
             <FormField
               control={form.control}
               name="transactionType"
@@ -70,7 +81,10 @@ const TransactionForm = () => {
                     <FormLabel>Transaction Type</FormLabel>
                     <FormControl className="w-full">
                       <Select
-                        onValueChange={field.onChange}
+                        onValueChange={(newVal) => {
+                          field.onChange(newVal);
+                          form.setValue("categoryID", 0);
+                        }}
                         value={field.value}
                       >
                         <SelectTrigger className="w-full">
@@ -102,7 +116,16 @@ const TransactionForm = () => {
                           {" "}
                           <SelectValue />{" "}
                         </SelectTrigger>
-                        <SelectContent>{/*  */}</SelectContent>
+                        <SelectContent>
+                          {filteredCategories.map((cate) => (
+                            <SelectItem
+                              key={cate.id}
+                              value={cate.id.toString()}
+                            >
+                              {cate.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
                       </Select>
                     </FormControl>
                     <FormMessage />
@@ -183,7 +206,7 @@ const TransactionForm = () => {
               )}
             />
           </fieldset>
-          <fieldset className="mt-5 flex flex-col gap-5">
+          <fieldset disabled={form.formState.isSubmitting} className="mt-5 flex flex-col gap-5">
             <FormField
               control={form.control}
               name="description"
@@ -200,9 +223,7 @@ const TransactionForm = () => {
               }}
             />
 
-            <Button type="submit">
-                Submit
-            </Button>
+            <Button type="submit">Submit</Button>
           </fieldset>
         </form>
       </Form>
